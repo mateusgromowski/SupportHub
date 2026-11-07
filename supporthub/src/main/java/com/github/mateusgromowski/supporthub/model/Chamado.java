@@ -50,8 +50,7 @@ public class Chamado {
     private Usuario solicitante;
 
     @ManyToOne
-    @Column(nullable = true, name = "tecnico_responsavel")
-    @JoinColumn(name = "tecnico_id", nullable = false)
+    @JoinColumn(name = "tecnico_id", nullable = true)
     private Usuario tecnicoResponsavel;
 
     @ManyToOne
