@@ -2,6 +2,7 @@ package com.github.mateusgromowski.supporthub.model;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,7 +16,7 @@ import com.github.mateusgromowski.supporthub.enums.Perfil;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "usuario")
+@Entity
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
