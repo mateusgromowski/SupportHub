@@ -16,6 +16,7 @@ public class UsuarioDTO {
     @Email
     @NotBlank
     private String email;
+    @NotBlank
     private String senha;
     @NotBlank
     private Perfil perfil;
