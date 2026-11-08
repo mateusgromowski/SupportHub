@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.github.mateusgromowski.supporthub.exception.EmailDuplicadoException;
 import com.github.mateusgromowski.supporthub.exception.UsuarioInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.UsuarioRepository;
@@ -26,14 +27,34 @@ public class UsuarioService {
     }
 
     public void create(Usuario usuario) {
+        validaEmail(usuario.getEmail());
         repository.save(usuario);
     }
 
     public void update(Usuario usuario) {
-        repository.save(usuario);
+        String email = usuario.getEmail();
+        validaEmail(email, usuario.getId());
+        Usuario entity = findById(usuario.getId());
+        entity.setNome(usuario.getNome());
+        entity.setEmail(email);
+        entity.setSenha(usuario.getSenha());
+        entity.setPerfil(usuario.getPerfil());
+        repository.save(entity);
     }
 
     public void delete(Long id) {
         repository.delete(findById(id));
+    }
+
+    public void validaEmail(String email, Long id) {
+        if (repository.existsByEmailAndIdNot(email, id)) {
+            throw new EmailDuplicadoException("Email inserido já existe no banco de dados.");
+        }
+    }
+
+    public void validaEmail(String email) {
+        if (repository.existsByEmail(email)) {
+            throw new EmailDuplicadoException("Email inserido já existe no banco de dados.");
+        }
     }
 }
