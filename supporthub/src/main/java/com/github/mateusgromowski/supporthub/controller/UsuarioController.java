@@ -12,10 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.mateusgromowski.supporthub.dto.UsuarioDTO;
+import com.github.mateusgromowski.supporthub.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
 public class UsuarioController {
+    private UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
     @GetMapping
     public List<UsuarioDTO> findAll() {
         return null;
