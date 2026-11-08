@@ -1,9 +1,8 @@
 package com.github.mateusgromowski.supporthub.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +49,7 @@ public class UsuarioController {
     @PostMapping
     public void create(@RequestBody UsuarioDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
+        usuario.setDataCadastro(LocalDateTime.now());
         service.create(usuario);
     }
 

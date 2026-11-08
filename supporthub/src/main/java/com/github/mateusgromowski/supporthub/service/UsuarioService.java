@@ -2,9 +2,13 @@ package com.github.mateusgromowski.supporthub.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.github.mateusgromowski.supporthub.exception.UsuarioInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.UsuarioRepository;
 
+@Service
 public class UsuarioService {
     private UsuarioRepository repository;
 
@@ -17,7 +21,8 @@ public class UsuarioService {
     }
 
     public Usuario findById(Long id) {
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow(
+                () -> new UsuarioInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
     }
 
     public void create(Usuario usuario) {
