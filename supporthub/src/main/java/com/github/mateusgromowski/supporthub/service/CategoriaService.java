@@ -2,7 +2,6 @@ package com.github.mateusgromowski.supporthub.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.github.mateusgromowski.supporthub.exception.CategoriaDuplicadaException;
@@ -27,23 +26,21 @@ public class CategoriaService {
                 () -> new CategoriaInexistenteException("A categoria de ID " + id + " não existe no banco de dados."));
     }
 
-    public ResponseEntity<?> create(Categoria categoria) {
+    public Categoria create(Categoria categoria) {
         verificaCategoriaExistente(categoria.getNome());
-        return ResponseEntity.ok(repository.save(categoria));
+        return repository.save(categoria);
     }
 
-    public ResponseEntity<?> update(Categoria categoria) {
+    public Categoria update(Categoria categoria) {
         verificaCategoriaExistente(categoria.getNome(), categoria.getId());
         Categoria entity = findById(categoria.getId());
         entity.setNome(categoria.getNome());
         entity.setDescricao(categoria.getDescricao());
-        repository.save(entity);
-        return ResponseEntity.ok(categoria);
+        return repository.save(entity);
     }
 
-    public ResponseEntity<?> delete(Long id) {
+    public void delete(Long id) {
         repository.delete(findById(id));
-        return ResponseEntity.noContent().build();
     }
 
     public void verificaCategoriaExistente(String nome) {
