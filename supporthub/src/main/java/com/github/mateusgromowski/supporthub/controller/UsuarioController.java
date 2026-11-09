@@ -18,6 +18,7 @@ import com.github.mateusgromowski.supporthub.dto.UsuarioDTO;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.service.UsuarioService;
 
+import jakarta.validation.Valid;
 import tools.jackson.databind.ObjectMapper;
 
 @RestController
@@ -49,14 +50,14 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> create(@RequestBody @Valid UsuarioDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         usuario.setDataCadastro(LocalDateTime.now());
         return service.create(usuario);
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> update(@RequestBody @Valid UsuarioDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         return service.update(usuario);
     }

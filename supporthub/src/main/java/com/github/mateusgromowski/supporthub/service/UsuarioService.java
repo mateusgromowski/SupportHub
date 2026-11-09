@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.github.mateusgromowski.supporthub.exception.BancoDeDadosVazioException;
 import com.github.mateusgromowski.supporthub.exception.EmailDuplicadoException;
 import com.github.mateusgromowski.supporthub.exception.UsuarioInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Usuario;
@@ -21,12 +19,10 @@ public class UsuarioService {
     }
 
     public List<Usuario> findAll() {
-        verificaBancoVazio();
         return repository.findAll();
     }
 
     public Usuario findById(Long id) {
-        verificaBancoVazio();
         return repository.findById(id).orElseThrow(
                 () -> new UsuarioInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
     }
@@ -63,12 +59,6 @@ public class UsuarioService {
     public void validaEmail(String email) {
         if (repository.existsByEmail(email)) {
             throw new EmailDuplicadoException("Email inserido já existe no banco de dados.");
-        }
-    }
-
-    public void verificaBancoVazio() {
-        if (repository.count() == 0) {
-            throw new BancoDeDadosVazioException("O banco de dados não contém informação.");
         }
     }
 }
