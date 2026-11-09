@@ -2,6 +2,8 @@ package com.github.mateusgromowski.supporthub.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.github.mateusgromowski.supporthub.exception.BancoDeDadosVazioException;
@@ -29,12 +31,13 @@ public class UsuarioService {
                 () -> new UsuarioInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
     }
 
-    public void create(Usuario usuario) {
+    public ResponseEntity<?> create(Usuario usuario) {
         validaEmail(usuario.getEmail());
         repository.save(usuario);
+        return ResponseEntity.ok(usuario);
     }
 
-    public void update(Usuario usuario) {
+    public ResponseEntity<?> update(Usuario usuario) {
         String email = usuario.getEmail();
         validaEmail(email, usuario.getId());
         Usuario entity = findById(usuario.getId());
@@ -43,10 +46,12 @@ public class UsuarioService {
         entity.setSenha(usuario.getSenha());
         entity.setPerfil(usuario.getPerfil());
         repository.save(entity);
+        return ResponseEntity.ok(entity);
     }
 
-    public void delete(Long id) {
+    public ResponseEntity<?> delete(Long id) {
         repository.delete(findById(id));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public void validaEmail(String email, Long id) {

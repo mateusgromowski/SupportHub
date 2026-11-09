@@ -3,6 +3,8 @@ package com.github.mateusgromowski.supporthub.controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,20 +49,20 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public void create(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> create(@RequestBody UsuarioDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         usuario.setDataCadastro(LocalDateTime.now());
-        service.create(usuario);
+        return service.create(usuario);
     }
 
-    @PutMapping("/{id}")
-    public void update(@RequestBody UsuarioDTO dto) {
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody UsuarioDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
-        service.update(usuario);
+        return service.update(usuario);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return service.delete(id);
     }
 }
