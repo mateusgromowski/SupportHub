@@ -9,19 +9,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.github.mateusgromowski.supporthub.exception.BancoDeDadosVazioException;
+import com.github.mateusgromowski.supporthub.exception.CategoriaDuplicadaException;
+import com.github.mateusgromowski.supporthub.exception.CategoriaInexistenteException;
 import com.github.mateusgromowski.supporthub.exception.EmailDuplicadoException;
 import com.github.mateusgromowski.supporthub.exception.UsuarioInexistenteException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({ BancoDeDadosVazioException.class, UsuarioInexistenteException.class })
+    @ExceptionHandler({ BancoDeDadosVazioException.class, UsuarioInexistenteException.class,
+            CategoriaInexistenteException.class })
     public ResponseEntity<?> handleBadRequest(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EmailDuplicadoException.class)
+    @ExceptionHandler({ EmailDuplicadoException.class, CategoriaDuplicadaException.class })
     public ResponseEntity<?> handleConflict(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
