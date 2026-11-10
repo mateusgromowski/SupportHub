@@ -4,16 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.github.mateusgromowski.supporthub.enums.Perfil;
 import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Chamado;
+import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.ChamadoRepository;
+import com.github.mateusgromowski.supporthub.repository.UsuarioRepository;
 
 @Service
 public class ChamadoService {
     private ChamadoRepository repository;
+    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
-    public ChamadoService(ChamadoRepository repository) {
+    public ChamadoService(ChamadoRepository repository, UsuarioRepository usuarioRepository,
+            UsuarioService usuarioService) {
         this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
+        this.usuarioService = usuarioService;
     }
 
     public List<Chamado> findAll() {
@@ -43,5 +51,16 @@ public class ChamadoService {
 
     public void delete(Long id) {
         repository.delete(findById(id));
+    }
+
+    public void atribuir(Long chamadoId, Long tecnicoId) {
+        Chamado chamado = findById(chamadoId);
+        Usuario tecnico = usuarioService.findById(tecnicoId);
+        if (!usuarioRepository.existsByIdAndPerfil(tecnicoId, Perfil.TECNICO)) {
+            throw new DadoInexistenteException(
+                    "O ID " + tecnicoId + " não é um tecnico apto para a ação.");
+        }
+        chamado.setTecnicoResponsavel(tecnico);
+        repository.save(chamado);
     }
 }
