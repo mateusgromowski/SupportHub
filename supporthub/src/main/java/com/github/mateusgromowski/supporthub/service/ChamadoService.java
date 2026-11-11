@@ -54,29 +54,29 @@ public class ChamadoService {
         return chamadoSalvo;
     }
 
-    public Chamado update(Chamado chamado, Long autorId) {
-        Chamado entity = findById(chamado.getId());
+    public Chamado update(ChamadoDTO dto) {
+        Chamado entity = findById(dto.getId());
         verificaStatusFechado(entity);
-
-        entity.setTitulo(chamado.getTitulo());
-        entity.setDescricao(chamado.getDescricao());
-        entity.setPrioridade(chamado.getPrioridade());
-        entity.setCategoria(chamado.getCategoria());
+        entity.setTitulo(dto.getTitulo());
+        entity.setDescricao(dto.getDescricao());
+        entity.setPrioridade(dto.getPrioridade());
+        entity.setCategoria(categoriaService.findById(dto.getCategoriaId()));
         Chamado entitySalvo = repository.save(entity);
-        historicoChamadoService.registrarHistorico(entity, "Chamado atualizado.", autorId);
+        historicoChamadoService.registrarHistorico(entity, "Chamado atualizado.", entitySalvo.getSolicitante().getId());
         return entitySalvo;
 
     }
 
-    public void atribuir(Long chamadoId, Long tecnicoId, Long autorId) {
+    public Chamado atribuir(Long chamadoId, Long tecnicoId, Long autorId) {
         Chamado chamado = findById(chamadoId);
         verificaStatusFechado(chamado);
         verificaStatusResolvido(chamado);
         Usuario tecnico = usuarioService.findById(tecnicoId);
         verificaAptidao(tecnico);
         chamado.setTecnicoResponsavel(tecnico);
-        repository.save(chamado);
+        Chamado chamadoSalvo = repository.save(chamado);
         historicoChamadoService.registrarHistorico(chamado, "Técnico atribuído", autorId);
+        return chamadoSalvo;
     }
 
     private void verificaAptidao(Usuario tecnico) {

@@ -18,10 +18,8 @@ public class ChamadoMapper {
 
     public ChamadoDTO toDTO(Chamado chamado) {
         ChamadoDTO dto = mapper.convertValue(chamado, ChamadoDTO.class);
-
         dto.setSolicitanteId(chamado.getSolicitante().getId());
         dto.setCategoriaId(chamado.getCategoria().getId());
-
         return dto;
     }
 }
