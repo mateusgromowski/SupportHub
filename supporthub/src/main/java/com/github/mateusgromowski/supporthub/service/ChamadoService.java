@@ -36,13 +36,13 @@ public class ChamadoService {
                 .orElseThrow(() -> new DadoInexistenteException("Chamado de ID " + id + " não encontrado."));
     }
 
-    public Chamado create(Chamado chamado, Usuario autor) {
+    public Chamado create(Chamado chamado, Long autorId) {
         Chamado chamadoSalvo = repository.save(chamado);
-        historicoChamadoService.registrarHistorico(chamadoSalvo, "Chamado aberto.", autor);
+        historicoChamadoService.registrarHistorico(chamadoSalvo, "Chamado aberto.", autorId);
         return chamadoSalvo;
     }
 
-    public Chamado update(Chamado chamado, Usuario autor) {
+    public Chamado update(Chamado chamado, Long autorId) {
         Chamado entity = findById(chamado.getId());
         verificaStatusFechado(entity);
 
@@ -51,23 +51,27 @@ public class ChamadoService {
         entity.setPrioridade(chamado.getPrioridade());
         entity.setCategoria(chamado.getCategoria());
         Chamado entitySalvo = repository.save(entity);
-        historicoChamadoService.registrarHistorico(entity, "Chamado atualizado.", autor);
+        historicoChamadoService.registrarHistorico(entity, "Chamado atualizado.", autorId);
         return entitySalvo;
 
     }
 
-    public void atribuir(Long chamadoId, Long tecnicoId, Usuario autor) {
+    public void atribuir(Long chamadoId, Long tecnicoId, Long autorId) {
         Chamado chamado = findById(chamadoId);
         verificaStatusFechado(chamado);
         verificaStatusResolvido(chamado);
         Usuario tecnico = usuarioService.findById(tecnicoId);
-        if (tecnico.getPerfil() != Perfil.TECNICO) {
-            throw new DadoInexistenteException(
-                    "O ID " + tecnicoId + " não é um tecnico apto para a ação.");
-        }
+        verificaAptidao(tecnico);
         chamado.setTecnicoResponsavel(tecnico);
         repository.save(chamado);
-        historicoChamadoService.registrarHistorico(chamado, "Técnico atribuído", autor);
+        historicoChamadoService.registrarHistorico(chamado, "Técnico atribuído", autorId);
+    }
+
+    private void verificaAptidao(Usuario tecnico) {
+        if (tecnico.getPerfil() != Perfil.TECNICO) {
+            throw new DadoInexistenteException(
+                    "O ID " + tecnico.getId() + " não é um tecnico apto para a ação.");
+        }
     }
 
     public void verificaStatusFechado(Chamado chamado) {

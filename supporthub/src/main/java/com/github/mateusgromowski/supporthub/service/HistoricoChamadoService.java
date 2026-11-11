@@ -7,15 +7,16 @@ import org.springframework.stereotype.Service;
 import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Chamado;
 import com.github.mateusgromowski.supporthub.model.HistoricoChamado;
-import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.HistoricoChamadoRepository;
 
 @Service
 public class HistoricoChamadoService {
     private HistoricoChamadoRepository repository;
+    private UsuarioService usuarioService;
 
-    public HistoricoChamadoService(HistoricoChamadoRepository repository) {
+    public HistoricoChamadoService(HistoricoChamadoRepository repository, UsuarioService usuarioService) {
         this.repository = repository;
+        this.usuarioService = usuarioService;
     }
 
     public List<HistoricoChamado> findAll() {
@@ -31,11 +32,11 @@ public class HistoricoChamadoService {
         repository.save(historicoChamado);
     }
 
-    public void registrarHistorico(Chamado chamado, String descricao, Usuario autor) {
+    public void registrarHistorico(Chamado chamado, String descricao, Long autorId) {
         HistoricoChamado historicoChamado = HistoricoChamado.builder()
                 .chamado(chamado)
                 .descricao(descricao)
-                .autor(autor)
+                .autor(usuarioService.findById(autorId))
                 .dataEvento(LocalDateTime.now())
                 .build();
         this.create(historicoChamado);
