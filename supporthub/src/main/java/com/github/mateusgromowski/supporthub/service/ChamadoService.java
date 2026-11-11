@@ -1,9 +1,11 @@
 package com.github.mateusgromowski.supporthub.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.github.mateusgromowski.supporthub.dto.ChamadoDTO;
 import com.github.mateusgromowski.supporthub.enums.Perfil;
 import com.github.mateusgromowski.supporthub.enums.Status;
 import com.github.mateusgromowski.supporthub.exception.ChamadoFechadoException;
@@ -13,18 +15,23 @@ import com.github.mateusgromowski.supporthub.model.Chamado;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.ChamadoRepository;
 
+import tools.jackson.databind.ObjectMapper;
+
 @Service
 public class ChamadoService {
     private ChamadoRepository repository;
     private UsuarioService usuarioService;
     private HistoricoChamadoService historicoChamadoService;
+    private CategoriaService categoriaService;
+    private ObjectMapper mapper;
 
-    public ChamadoService(ChamadoRepository repository,
-            UsuarioService usuarioService,
-            HistoricoChamadoService historicoChamadoService) {
+    public ChamadoService(ChamadoRepository repository, UsuarioService usuarioService,
+            HistoricoChamadoService historicoChamadoService, CategoriaService categoriaService, ObjectMapper mapper) {
         this.repository = repository;
         this.usuarioService = usuarioService;
         this.historicoChamadoService = historicoChamadoService;
+        this.categoriaService = categoriaService;
+        this.mapper = mapper;
     }
 
     public List<Chamado> findAll() {
@@ -36,9 +43,14 @@ public class ChamadoService {
                 .orElseThrow(() -> new DadoInexistenteException("Chamado de ID " + id + " não encontrado."));
     }
 
-    public Chamado create(Chamado chamado, Long autorId) {
+    public Chamado create(ChamadoDTO chamadoDTO) {
+        Chamado chamado = mapper.convertValue(chamadoDTO, Chamado.class);
+        chamado.setDataAbertura(LocalDateTime.now());
+        chamado.setSolicitante(usuarioService.findById(chamadoDTO.getSolicitanteId()));
+        chamado.setCategoria(categoriaService.findById(chamadoDTO.getCategoriaId()));
         Chamado chamadoSalvo = repository.save(chamado);
-        historicoChamadoService.registrarHistorico(chamadoSalvo, "Chamado aberto.", autorId);
+        historicoChamadoService.registrarHistorico(chamadoSalvo, "Chamado aberto.",
+                chamadoSalvo.getSolicitante().getId());
         return chamadoSalvo;
     }
 

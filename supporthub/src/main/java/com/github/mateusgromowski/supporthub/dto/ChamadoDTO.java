@@ -6,14 +6,35 @@ import com.github.mateusgromowski.supporthub.enums.Status;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record ChamadoDTO(
-        Long id,
-        @NotBlank String titulo,
-        @NotNull String descricao,
-        @NotNull Prioridade prioridade,
-        @NotNull Status status,
-        @JsonProperty("solicitante_id") @NotNull Long solicitanteId,
-        @JsonProperty("categoria_id") @NotNull Long categoriaId) {
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class ChamadoDTO {
+
+        private Long id;
+
+        @NotBlank
+        private String titulo;
+
+        @NotBlank
+        private String descricao;
+
+        @NotNull
+        private Prioridade prioridade;
+
+        @NotNull
+        private Status status;
+
+        @JsonProperty("solicitante_id")
+        @NotNull
+        private Long solicitanteId;
+
+        @JsonProperty("categoria_id")
+        @NotNull
+        private Long categoriaId;
 
 }
