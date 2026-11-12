@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.mateusgromowski.supporthub.dto.UsuarioDTO;
+import com.github.mateusgromowski.supporthub.dto.UsuarioRequestDTO;
+import com.github.mateusgromowski.supporthub.dto.UsuarioResponseDTO;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.service.UsuarioService;
 
@@ -33,33 +34,35 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<UsuarioDTO> findAll() {
+    public List<UsuarioResponseDTO> findAll() {
         List<Usuario> usuarios = service.findAll();
-        List<UsuarioDTO> dtos = new ArrayList<>();
+        List<UsuarioResponseDTO> dtos = new ArrayList<>();
         for (Usuario usuario : usuarios) {
-            UsuarioDTO dto = mapper.convertValue(usuario, UsuarioDTO.class);
+            UsuarioResponseDTO dto = mapper.convertValue(usuario, UsuarioResponseDTO.class);
             dtos.add(dto);
         }
         return dtos;
     }
 
     @GetMapping("/{id}")
-    public UsuarioDTO findById(@PathVariable Long id) {
+    public UsuarioResponseDTO findById(@PathVariable Long id) {
         Usuario usuario = service.findById(id);
-        return mapper.convertValue(usuario, UsuarioDTO.class);
+        return mapper.convertValue(usuario, UsuarioResponseDTO.class);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid UsuarioDTO dto) {
+    public ResponseEntity<?> create(@RequestBody @Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         usuario.setDataCadastro(LocalDateTime.now());
-        return service.create(usuario);
+        UsuarioResponseDTO response = mapper.convertValue(service.create(usuario), UsuarioResponseDTO.class);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid UsuarioDTO dto) {
+    public ResponseEntity<?> update(@RequestBody @Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
-        return service.update(usuario);
+        UsuarioResponseDTO response = mapper.convertValue(service.update(usuario), UsuarioResponseDTO.class);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

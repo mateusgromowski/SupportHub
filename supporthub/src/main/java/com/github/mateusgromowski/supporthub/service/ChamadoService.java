@@ -74,6 +74,7 @@ public class ChamadoService {
         Usuario tecnico = usuarioService.findById(tecnicoId);
         verificaAptidao(tecnico);
         chamado.setTecnicoResponsavel(tecnico);
+        chamado.setStatus(Status.EM_ANDAMENTO);
         Chamado chamadoSalvo = repository.save(chamado);
         historicoChamadoService.registrarHistorico(chamado, "Técnico atribuído", autorId);
         return chamadoSalvo;

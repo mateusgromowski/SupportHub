@@ -28,13 +28,13 @@ public class UsuarioService {
                 () -> new DadoInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
     }
 
-    public ResponseEntity<?> create(Usuario usuario) {
+    public Usuario create(Usuario usuario) {
         validaEmail(usuario.getEmail());
-        repository.save(usuario);
-        return ResponseEntity.ok(usuario);
+
+        return repository.save(usuario);
     }
 
-    public ResponseEntity<?> update(Usuario usuario) {
+    public Usuario update(Usuario usuario) {
         String email = usuario.getEmail();
         validaEmail(email, usuario.getId());
         Usuario entity = findById(usuario.getId());
@@ -42,8 +42,7 @@ public class UsuarioService {
         entity.setEmail(email);
         entity.setSenha(usuario.getSenha());
         entity.setPerfil(usuario.getPerfil());
-        repository.save(entity);
-        return ResponseEntity.ok(entity);
+        return repository.save(entity);
     }
 
     public ResponseEntity<?> delete(Long id) {
