@@ -14,6 +14,7 @@ import com.github.mateusgromowski.supporthub.exception.ChamadoFechadoException;
 import com.github.mateusgromowski.supporthub.exception.ChamadoResolvidoException;
 import com.github.mateusgromowski.supporthub.exception.DadoDuplicadoException;
 import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
+import com.github.mateusgromowski.supporthub.exception.StatusNaoPermitidoException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             DadoInexistenteException.class, HttpMessageNotReadableException.class,
-            DataIntegrityViolationException.class, ChamadoFechadoException.class, ChamadoResolvidoException.class })
+            DataIntegrityViolationException.class, ChamadoFechadoException.class, ChamadoResolvidoException.class, StatusNaoPermitidoException.class })
     public ResponseEntity<?> handleBadRequest(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));

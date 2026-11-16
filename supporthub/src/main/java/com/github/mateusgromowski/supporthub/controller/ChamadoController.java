@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.mateusgromowski.supporthub.dto.ChamadoDTO;
+import com.github.mateusgromowski.supporthub.enums.Status;
 import com.github.mateusgromowski.supporthub.mapper.ChamadoMapper;
 import com.github.mateusgromowski.supporthub.model.Chamado;
 import com.github.mateusgromowski.supporthub.service.ChamadoService;
 
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/api/v1/chamados")
@@ -53,23 +55,30 @@ public class ChamadoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid ChamadoDTO chamadoDTO) {
+    public ResponseEntity<ChamadoDTO> create(@RequestBody @Valid ChamadoDTO chamadoDTO) {
         Chamado chamadoSalvo = service.create(chamadoDTO);
         ChamadoDTO novoDTO = mapper.toDTO(chamadoSalvo);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoDTO);
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid ChamadoDTO chamadoDTO) {
+    public ResponseEntity<ChamadoDTO> update(@RequestBody @Valid ChamadoDTO chamadoDTO) {
         Chamado chamado = service.update(chamadoDTO);
         ChamadoDTO dto = mapper.toDTO(chamado);
         return ResponseEntity.ok(dto);
     }
 
     @PatchMapping("/{idChamado}/atribuir/{tecnicoId}")
-    public ResponseEntity<?> atribuir(@PathVariable Long idChamado, @PathVariable Long tecnicoId,
+    public ResponseEntity<ChamadoDTO> atribuir(@PathVariable Long idChamado, @PathVariable Long tecnicoId,
             @RequestParam(value = "autor_id") Long autorId) {
         Chamado chamado = service.atribuir(idChamado, tecnicoId, autorId);
         return ResponseEntity.ok(mapper.toDTO(chamado));
+    }
+
+    @PatchMapping("/alterar/{idChamado}")
+    public ResponseEntity<ChamadoDTO> alterarStatus(@PathVariable Long idChamado,
+            @PathParam(value = "status") Status status) {
+        ChamadoDTO dto = mapper.toDTO(service.alteraStatus(idChamado, status));
+        return ResponseEntity.ok(dto);
     }
 }

@@ -11,6 +11,7 @@ import com.github.mateusgromowski.supporthub.enums.Status;
 import com.github.mateusgromowski.supporthub.exception.ChamadoFechadoException;
 import com.github.mateusgromowski.supporthub.exception.ChamadoResolvidoException;
 import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
+import com.github.mateusgromowski.supporthub.exception.StatusNaoPermitidoException;
 import com.github.mateusgromowski.supporthub.model.Chamado;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.ChamadoRepository;
@@ -78,6 +79,17 @@ public class ChamadoService {
         Chamado chamadoSalvo = repository.save(chamado);
         historicoChamadoService.registrarHistorico(chamado, "Técnico atribuído", autorId);
         return chamadoSalvo;
+    }
+
+    public Chamado alteraStatus(Long chamadoId, Status status) {
+        Chamado chamado = findById(chamadoId);
+        verificaStatusFechado(chamado);
+        if (chamado.getStatus() == Status.ABERTO && status == Status.FECHADO) {
+            throw new StatusNaoPermitidoException(
+                    "Um status não pode ser alterado de aberto para fechado diretamente.");
+        }
+        chamado.setStatus(status);
+        return repository.save(chamado);
     }
 
     private void verificaAptidao(Usuario tecnico) {

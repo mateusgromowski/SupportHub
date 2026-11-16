@@ -51,7 +51,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid UsuarioRequestDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> create(@RequestBody @Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         usuario.setDataCadastro(LocalDateTime.now());
         UsuarioResponseDTO response = mapper.convertValue(service.create(usuario), UsuarioResponseDTO.class);
@@ -59,14 +59,15 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid UsuarioRequestDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> update(@RequestBody @Valid UsuarioRequestDTO dto) {
         Usuario usuario = mapper.convertValue(dto, Usuario.class);
         UsuarioResponseDTO response = mapper.convertValue(service.update(usuario), UsuarioResponseDTO.class);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        return service.delete(id);
+    public ResponseEntity<UsuarioResponseDTO> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
