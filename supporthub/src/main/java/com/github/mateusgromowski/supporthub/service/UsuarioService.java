@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.github.mateusgromowski.supporthub.exception.EmailDuplicadoException;
-import com.github.mateusgromowski.supporthub.exception.UsuarioInexistenteException;
+
+import com.github.mateusgromowski.supporthub.exception.DadoDuplicadoException;
+import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Usuario;
 import com.github.mateusgromowski.supporthub.repository.UsuarioRepository;
 
@@ -24,16 +25,16 @@ public class UsuarioService {
 
     public Usuario findById(Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new UsuarioInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
+                () -> new DadoInexistenteException(String.format("Usuário de ID %d não encontrado.", id)));
     }
 
-    public ResponseEntity<?> create(Usuario usuario) {
+    public Usuario create(Usuario usuario) {
         validaEmail(usuario.getEmail());
-        repository.save(usuario);
-        return ResponseEntity.ok(usuario);
+
+        return repository.save(usuario);
     }
 
-    public ResponseEntity<?> update(Usuario usuario) {
+    public Usuario update(Usuario usuario) {
         String email = usuario.getEmail();
         validaEmail(email, usuario.getId());
         Usuario entity = findById(usuario.getId());
@@ -41,8 +42,7 @@ public class UsuarioService {
         entity.setEmail(email);
         entity.setSenha(usuario.getSenha());
         entity.setPerfil(usuario.getPerfil());
-        repository.save(entity);
-        return ResponseEntity.ok(entity);
+        return repository.save(entity);
     }
 
     public ResponseEntity<?> delete(Long id) {
@@ -52,13 +52,13 @@ public class UsuarioService {
 
     public void validaEmail(String email, Long id) {
         if (repository.existsByEmailAndIdNot(email, id)) {
-            throw new EmailDuplicadoException("Email inserido já existe no banco de dados.");
+            throw new DadoDuplicadoException("Email inserido já existe no banco de dados.");
         }
     }
 
     public void validaEmail(String email) {
         if (repository.existsByEmail(email)) {
-            throw new EmailDuplicadoException("Email inserido já existe no banco de dados.");
+            throw new DadoDuplicadoException("Email inserido já existe no banco de dados.");
         }
     }
 }

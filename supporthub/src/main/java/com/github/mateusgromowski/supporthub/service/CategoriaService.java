@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.github.mateusgromowski.supporthub.exception.CategoriaDuplicadaException;
-import com.github.mateusgromowski.supporthub.exception.CategoriaInexistenteException;
+import com.github.mateusgromowski.supporthub.exception.DadoDuplicadoException;
+import com.github.mateusgromowski.supporthub.exception.DadoInexistenteException;
 import com.github.mateusgromowski.supporthub.model.Categoria;
 import com.github.mateusgromowski.supporthub.repository.CategoriaRepository;
 
@@ -23,7 +23,7 @@ public class CategoriaService {
 
     public Categoria findById(Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new CategoriaInexistenteException("A categoria de ID " + id + " não existe no banco de dados."));
+                () -> new DadoInexistenteException("A categoria de ID " + id + " não existe no banco de dados."));
     }
 
     public Categoria create(Categoria categoria) {
@@ -45,13 +45,13 @@ public class CategoriaService {
 
     public void verificaCategoriaExistente(String nome) {
         if (repository.existsByNome(nome)) {
-            throw new CategoriaDuplicadaException("Já existe uma categoria com esse nome no banco de dados.");
+            throw new DadoDuplicadoException("Já existe uma categoria com esse nome no banco de dados.");
         }
     }
 
     public void verificaCategoriaExistente(String nome, Long id) {
         if (repository.existsByNomeAndIdNot(nome, id)) {
-            throw new CategoriaDuplicadaException("Já existe uma categoria com esse nome no banco de dados.");
+            throw new DadoDuplicadoException("Já existe uma categoria com esse nome no banco de dados.");
         }
     }
 

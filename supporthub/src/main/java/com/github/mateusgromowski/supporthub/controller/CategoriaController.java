@@ -50,21 +50,22 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid CategoriaDTO dto) {
+    public ResponseEntity<CategoriaDTO> create(@RequestBody @Valid CategoriaDTO dto) {
         Categoria categoria = mapper.convertValue(dto, Categoria.class);
         CategoriaDTO categoriaDTO = mapper.convertValue(service.create(categoria), CategoriaDTO.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriaDTO);
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid CategoriaDTO dto) {
+    public ResponseEntity<CategoriaDTO> update(@RequestBody @Valid CategoriaDTO dto) {
         Categoria categoria = mapper.convertValue(dto, Categoria.class);
         CategoriaDTO categoriaDTO = mapper.convertValue(service.update(categoria), CategoriaDTO.class);
         return ResponseEntity.ok(categoriaDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<CategoriaDTO> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
